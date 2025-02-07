@@ -1,6 +1,6 @@
 namespace TempTake_Server.Models
 {
-    public class ManagerWorker
+    public class UserManager
     {
         // Primary Key
         public int Id { get; set; }
@@ -10,9 +10,10 @@ namespace TempTake_Server.Models
         public DateTime? DeletedAt { get; set; } = null;
 
         // Foreign Keys
+        public int UserId { get; set; }
+        public User User { get; set; }
         public int ManagerId { get; set; }
         public Manager Manager { get; set; }
-        public int WorkerId { get; set; }
-        public Worker Worker { get; set; }
+
     }
 }

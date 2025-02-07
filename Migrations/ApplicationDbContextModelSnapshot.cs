@@ -33,22 +33,24 @@ namespace TempTake_Server.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<decimal>("Humidity")
+                    b.Property<decimal?>("Humidity")
                         .HasColumnType("decimal(18, 2)");
 
-                    b.Property<int>("ManagerWorkerId")
+                    b.Property<decimal?>("Ppm")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<decimal?>("Pressure")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<decimal?>("Temperature")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<int>("WorkerId")
                         .HasColumnType("integer");
 
-                    b.Property<decimal>("Ppm")
-                        .HasColumnType("decimal(18, 2)");
-
-                    b.Property<decimal>("Pressure")
-                        .HasColumnType("decimal(18, 2)");
-
-                    b.Property<decimal>("Temperature")
-                        .HasColumnType("decimal(18, 2)");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("WorkerId");
 
                     b.ToTable("Entries");
                 });
@@ -63,6 +65,10 @@ namespace TempTake_Server.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("MAC")
+                        .IsRequired()
+                        .HasColumnType("varchar(12)");
 
                     b.HasKey("Id");
 
@@ -80,7 +86,7 @@ namespace TempTake_Server.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("DeletedAt")
+                    b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("ManagerId")
@@ -90,6 +96,10 @@ namespace TempTake_Server.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ManagerId");
+
+                    b.HasIndex("WorkerId");
 
                     b.ToTable("ManagerWorkers");
                 });
@@ -109,12 +119,39 @@ namespace TempTake_Server.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(12)");
 
-                    b.Property<int>("ManagerId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.ToTable("Workers");
+                });
+
+            modelBuilder.Entity("TempTake_Server.Models.Entry", b =>
+                {
+                    b.HasOne("TempTake_Server.Models.Worker", "Worker")
+                        .WithMany()
+                        .HasForeignKey("WorkerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Worker");
+                });
+
+            modelBuilder.Entity("TempTake_Server.Models.ManagerWorker", b =>
+                {
+                    b.HasOne("TempTake_Server.Models.Manager", "Manager")
+                        .WithMany()
+                        .HasForeignKey("ManagerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TempTake_Server.Models.Worker", "Worker")
+                        .WithMany()
+                        .HasForeignKey("WorkerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Manager");
+
+                    b.Navigation("Worker");
                 });
 #pragma warning restore 612, 618
         }
