@@ -18,8 +18,16 @@ namespace TempTake_Server.Repository
             _context = context;
         }
 
-        public async Task<IEnumerable<Entry>> GetAllManagerEntriesAsync(int managerId)
+        public async Task<IEnumerable<Entry>> GetAllManagerEntriesAsync(string workerMAC)
         {
+            int? managerId = await _context.Managers
+                .Where(m => m.MAC == workerMAC)
+                .Select(m => m.Id)
+                .FirstOrDefaultAsync();
+
+            if (managerId == null)
+                return new List<Entry>();
+
             List<ManagerWorker> managerWorkers = await _context.ManagerWorkers
                 .Where(mw =>
                     mw.ManagerId == managerId &&
@@ -32,15 +40,31 @@ namespace TempTake_Server.Repository
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Entry>> GetAllWorkerEntriesAsync(int workerId)
+        public async Task<IEnumerable<Entry>> GetAllWorkerEntriesAsync(string workerMAC)
         {
+            int? workerId = await _context.Workers
+                .Where(w => w.MAC == workerMAC)
+                .Select(w => w.Id)
+                .FirstOrDefaultAsync();
+
+            if (workerId == null)
+                return new List<Entry>();
+
             return await _context.Entries
                 .Where(e => e.WorkerId == workerId)
                 .ToListAsync();
         }
 
-        public async Task<Entry?> GetLastManagerEntryAsync(int managerId)
+        public async Task<Entry?> GetLastManagerEntryAsync(string managerMAC)
         {
+            int? managerId = await _context.Managers
+                .Where(m => m.MAC == managerMAC)
+                .Select(m => m.Id)
+                .FirstOrDefaultAsync();
+
+            if (managerId == null)
+                return null;
+
             List<ManagerWorker> managerWorkers = await _context.ManagerWorkers
                 .Where(mw =>
                     mw.ManagerId == managerId &&
@@ -54,16 +78,32 @@ namespace TempTake_Server.Repository
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<Entry?> GetLastWorkerEntryAsync(int workerId)
+        public async Task<Entry?> GetLastWorkerEntryAsync(string workerMAC)
         {
+            int? workerId = _context.Workers
+                .Where(w => w.MAC == workerMAC)
+                .Select(w => w.Id)
+                .FirstOrDefault();
+
+            if (workerId == null)
+                return null;
+
             return await _context.Entries
                 .Where(e => e.WorkerId == workerId)
                 .OrderByDescending(e => e.CreatedAt)
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<Entry>> GetManagerEntriesAsync(int managerId, DateTime from, DateTime to)
+        public async Task<IEnumerable<Entry>> GetManagerEntriesAsync(string managerMAC, DateTime from, DateTime to)
         {
+            int? managerId = await _context.Managers
+                .Where(m => m.MAC == managerMAC)
+                .Select(m => m.Id)
+                .FirstOrDefaultAsync();
+
+            if (managerId == null)
+                return new List<Entry>();
+
             List<ManagerWorker> managerWorkers = await _context.ManagerWorkers
                 .Where(mw =>
                     mw.ManagerId == managerId &&
@@ -81,8 +121,16 @@ namespace TempTake_Server.Repository
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Entry>> GetWorkerEntriesAsync(int workerId, DateTime from, DateTime to)
+        public async Task<IEnumerable<Entry>> GetWorkerEntriesAsync(string workerMAC, DateTime from, DateTime to)
         {
+            int? workerId = await _context.Workers
+                .Where(w => w.MAC == workerMAC)
+                .Select(w => w.Id)
+                .FirstOrDefaultAsync();
+
+            if (workerId == null)
+                return new List<Entry>();
+
             return await _context.Entries
                 .Where(e =>
                     e.WorkerId == workerId &&
