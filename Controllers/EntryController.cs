@@ -1,17 +1,14 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using TempTake_Server.Context;
-using TempTake_Server.Dtos;
 using TempTake_Server.Dtos.Entry;
 using TempTake_Server.Interfaces;
-using TempTake_Server.Models;
 
 namespace TempTake_Server.Controllers
 {
     [Route("api/entry")]
     [ApiController]
-    class EntryController : ControllerBase {
+    public class EntryController : ControllerBase
+    {
         private readonly ApplicationDbContext _context;
         private readonly IEntryRepository _entryRepository;
 

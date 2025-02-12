@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TempTake_Server.Context;
+using TempTake_Server.Interfaces;
+using TempTake_Server.Repository;
 
 
 int serverPort = int.Parse(Environment.GetEnvironmentVariable("SERVER_PORT") ?? "8080");
@@ -12,8 +14,13 @@ string connectionString = $"Server={dbServer};Database={dbName};User Id={dbUser}
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
 builder.WebHost.UseUrls($"http://*:{serverPort}");
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
+
+builder.Services.AddScoped<IEntryRepository, EntryRepository>();
+builder.Services.AddScoped<IWorkerRepository, WorkerRepository>();
+builder.Services.AddScoped<IManagerRepository, ManagerRepository>();
 
 var app = builder.Build();
 
@@ -26,7 +33,7 @@ using(var scope = app.Services.CreateScope())
 app.MapGet("/", () => "Hello World!");
 
 app.UseHttpsRedirection();
-app.UseAuthorization();
+// app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
