@@ -127,8 +127,17 @@ namespace TempTake_Server.Repository
             if (workerId == null)
                 return new List<Entry>();
 
+            DateTime? registeredAt = await _context.ManagerWorkers
+                .Where(mw => mw.WorkerId == workerId && mw.DeletedAt == null)
+                .Select(mw => mw.CreatedAt)
+                .FirstOrDefaultAsync();
+
+            if (registeredAt == null)
+                return new List<Entry>();
+
             return await _context.Entries
                 .Where(e =>
+                    e.CreatedAt >= registeredAt &&
                     e.WorkerId == workerId &&
                     e.CreatedAt >= from &&
                     e.CreatedAt <= to
