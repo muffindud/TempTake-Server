@@ -14,10 +14,10 @@ namespace TempTake_Server.Repository
             _context = context;
         }
 
-        public async Task<IEnumerable<Entry>> GetAllManagerEntriesAsync(string workerMAC)
+        public async Task<IEnumerable<Entry>> GetAllManagerEntriesAsync(string managerMAC)
         {
             int? managerId = await _context.Managers
-                .Where(m => m.MAC == workerMAC)
+                .Where(m => m.MAC == managerMAC)
                 .Select(m => m.Id)
                 .FirstOrDefaultAsync();
 
@@ -32,7 +32,10 @@ namespace TempTake_Server.Repository
                 .ToListAsync();
 
             return await _context.Entries
-                .Where(e => managerWorkers.Any(mw => mw.WorkerId == e.WorkerId))
+                .Where(e =>
+                    managerWorkers.Any(mw => mw.WorkerId == e.WorkerId) &&
+                    managerWorkers.Any(mw => e.CreatedAt >= mw.CreatedAt)
+                )
                 .ToListAsync();
         }
 
