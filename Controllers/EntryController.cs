@@ -17,17 +17,43 @@ namespace TempTake_Server.Controllers
             _entryRepository = entryRepository;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetWorkerEntries([FromBody] EntryDto entryDto)
+        [HttpGet("worker")]
+        public async Task<IActionResult> GetWorkerEntries([FromBody] WorkerEntryDto entryDto)
         {
+            if (entryDto.WorkerMAC == null)
+                return BadRequest("WorkerMAC is required");
+
             var entries = await _entryRepository.GetWorkerEntriesAsync(entryDto.WorkerMAC, entryDto.From, entryDto.To);
             return Ok(entries);
         }
 
-        [HttpGet("all")]
-        public async Task<IActionResult> GetAllWorkerEntries([FromBody] EntryDto entryDto)
+        [HttpGet("worker/all")]
+        public async Task<IActionResult> GetAllWorkerEntries([FromBody] WorkerEntryDto entryDto)
         {
+            if (entryDto.WorkerMAC == null)
+                return BadRequest("WorkerMAC is required");
+
             var entries = await _entryRepository.GetAllWorkerEntriesAsync(entryDto.WorkerMAC);
+            return Ok(entries);
+        }
+
+        [HttpGet("manager")]
+        public async Task<IActionResult> GetManagerEntries([FromBody] ManagerEntryDto entryDto)
+        {
+            if (entryDto.ManagerMAC == null)
+                return BadRequest("ManagerMAC is required");
+
+            var entries = await _entryRepository.GetManagerEntriesAsync(entryDto.ManagerMAC, entryDto.From, entryDto.To);
+            return Ok(entries);
+        }
+
+        [HttpGet("manager/all")]
+        public async Task<IActionResult> GetAllManagerEntries([FromBody] ManagerEntryDto entryDto)
+        {
+            if (entryDto.ManagerMAC == null)
+                return BadRequest("ManagerMAC is required");
+
+            var entries = await _entryRepository.GetAllManagerEntriesAsync(entryDto.ManagerMAC);
             return Ok(entries);
         }
     }

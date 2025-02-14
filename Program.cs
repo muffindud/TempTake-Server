@@ -30,8 +30,6 @@ using(var scope = app.Services.CreateScope())
     context.Database.Migrate();
 }
 
-app.MapGet("/", () => "Hello World!");
-
 app.UseHttpsRedirection();
 // app.UseAuthorization();
 app.MapControllers();
