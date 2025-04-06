@@ -13,5 +13,7 @@ namespace TempTake_Server.Context
         public DbSet<Worker> Workers { get; set; }
         public DbSet<ManagerWorker> ManagerWorkers { get; set; }
         public DbSet<Entry> Entries { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<UserManager> UserManagers { get; set; }
     }
 }
