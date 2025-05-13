@@ -8,7 +8,7 @@ int serverPort = int.Parse(Environment.GetEnvironmentVariable("SERVER_PORT") ?? 
 string dbServer = Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost";
 string dbName = Environment.GetEnvironmentVariable("DB_NAME") ?? "temptake";
 string dbUser = Environment.GetEnvironmentVariable("DB_USER") ?? "postgres";
-string dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "posgres";
+string dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "postgres";
 string connectionString = $"Server={dbServer};Database={dbName};User Id={dbUser};Password={dbPassword};";
 
 var builder = WebApplication.CreateBuilder(args);

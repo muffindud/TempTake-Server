@@ -5,132 +5,131 @@ using TempTake_Server.Models;
 
 namespace TempTake_Server.Repository
 {
-    public class EntryRepository : IEntryRepository
+    public class EntryRepository(ApplicationDbContext context) : IEntryRepository
     {
-        private readonly ApplicationDbContext _context;
-
-        public EntryRepository(ApplicationDbContext context)
+        private async Task<int?> GetWorkerIdByMac(string workerMac)
         {
-            _context = context;
+            return await context.Workers
+                .Where(w => w.MAC == workerMac)
+                .Select(w => w.Id)
+                .FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<Entry>> GetAllManagerEntriesAsync(string managerMAC)
+        private async Task<int?> GetManagerIdByMac(string managerMac)
         {
-            int? managerId = await _context.Managers
-                .Where(m => m.MAC == managerMAC)
+            return await context.Managers
+                .Where(m => m.MAC == managerMac)
                 .Select(m => m.Id)
                 .FirstOrDefaultAsync();
+        }
+
+        public async Task<IEnumerable<Entry>> GetAllManagerEntriesAsync(string managerMac)
+        {
+            var managerId = await this.GetManagerIdByMac(managerMac);
 
             if (managerId == null)
                 return new List<Entry>();
 
-            List<ManagerWorker> managerWorkers = await _context.ManagerWorkers
-                .Where(mw =>
-                    mw.ManagerId == managerId &&
-                    mw.DeletedAt == null
-                )
-                .ToListAsync();
+            var entries = await (context.Entries
+                .Join(
+                    context.ManagerWorkers,
+                    e => e.WorkerId,
+                    mw => mw.WorkerId,
+                    (e, mw) => new { e, mw }
+                ).Where(@t =>
+                    @t.mw.ManagerId == @managerId &&
+                    @t.mw.DeletedAt == null &&
+                    @t.e.CreatedAt >= @t.mw.CreatedAt
+                ).Select(@t => @t.e)).ToListAsync();
 
-            return await _context.Entries
-                .Where(e =>
-                    managerWorkers.Any(mw => mw.WorkerId == e.WorkerId) &&
-                    managerWorkers.Any(mw => e.CreatedAt >= mw.CreatedAt)
-                )
-                .ToListAsync();
+            return entries;
         }
 
-        public async Task<IEnumerable<Entry>> GetAllWorkerEntriesAsync(string workerMAC)
+        public async Task<IEnumerable<Entry>> GetAllWorkerEntriesAsync(string workerMac)
         {
-            int? workerId = await _context.Workers
-                .Where(w => w.MAC == workerMAC)
-                .Select(w => w.Id)
-                .FirstOrDefaultAsync();
+            var workerId = await this.GetWorkerIdByMac(workerMac);
 
             if (workerId == null)
                 return new List<Entry>();
 
-            return await _context.Entries
+            var entries = await context.Entries
                 .Where(e => e.WorkerId == workerId)
                 .ToListAsync();
+
+            return entries;
         }
 
-        public async Task<Entry?> GetLastManagerEntryAsync(string managerMAC)
+        public async Task<Entry?> GetLastManagerEntryAsync(string managerMac)
         {
-            int? managerId = await _context.Managers
-                .Where(m => m.MAC == managerMAC)
-                .Select(m => m.Id)
-                .FirstOrDefaultAsync();
+            var managerId = await this.GetManagerIdByMac(managerMac);
 
             if (managerId == null)
                 return null;
 
-            List<ManagerWorker> managerWorkers = await _context.ManagerWorkers
-                .Where(mw =>
-                    mw.ManagerId == managerId &&
-                    mw.DeletedAt == null
-                )
-                .ToListAsync();
-
-            return await _context.Entries
-                .Where(e => managerWorkers.Any(mw => mw.WorkerId == e.WorkerId))
-                .OrderByDescending(e => e.CreatedAt)
+            var entry = await context.Entries
+                .Join(
+                    context.ManagerWorkers,
+                    e => e.WorkerId,
+                    mw => mw.WorkerId,
+                    (e, mw) => new { e, mw }
+                ).Where(@t =>
+                    @t.mw.ManagerId == @managerId &&
+                    @t.mw.DeletedAt == null
+                ).OrderByDescending(@t => @t.e.CreatedAt)
+                .Select(@t => @t.e)
                 .FirstOrDefaultAsync();
+
+            return entry;
         }
 
-        public async Task<Entry?> GetLastWorkerEntryAsync(string workerMAC)
+        public async Task<Entry?> GetLastWorkerEntryAsync(string workerMac)
         {
-            int? workerId = _context.Workers
-                .Where(w => w.MAC == workerMAC)
-                .Select(w => w.Id)
-                .FirstOrDefault();
+            var workerId = await this.GetWorkerIdByMac(workerMac);
 
             if (workerId == null)
                 return null;
 
-            return await _context.Entries
+            var entry = await context.Entries
                 .Where(e => e.WorkerId == workerId)
                 .OrderByDescending(e => e.CreatedAt)
                 .FirstOrDefaultAsync();
+
+            return entry;
         }
 
-        public async Task<IEnumerable<Entry>> GetManagerEntriesAsync(string managerMAC, DateTime from, DateTime to)
+        public async Task<IEnumerable<Entry>> GetManagerEntriesAsync(string managerMac, DateTime from, DateTime to)
         {
-            int? managerId = await _context.Managers
-                .Where(m => m.MAC == managerMAC)
-                .Select(m => m.Id)
-                .FirstOrDefaultAsync();
+            var managerId = await this.GetManagerIdByMac(managerMac);
 
             if (managerId == null)
                 return new List<Entry>();
 
-            List<ManagerWorker> managerWorkers = await _context.ManagerWorkers
-                .Where(mw =>
-                    mw.ManagerId == managerId &&
-                    mw.DeletedAt == null
-                )
+            var entries = await context.Entries
+                .Join(
+                    context.ManagerWorkers,
+                    e => e.WorkerId,
+                    mw => mw.WorkerId,
+                    (e, mw) => new { e, mw }
+                ).Where(@t =>
+                    @t.mw.ManagerId == @managerId &&
+                    @t.mw.DeletedAt == null &&
+                    @t.e.CreatedAt >= @t.mw.CreatedAt &&
+                    @t.e.CreatedAt >= @from &&
+                    @t.e.CreatedAt <= @to
+                ).Select(@t => @t.e)
                 .ToListAsync();
 
-            return await _context.Entries
-                .Where(e =>
-                    managerWorkers.Any(mw => mw.WorkerId == e.WorkerId) &&
-                    managerWorkers.Any(mw => e.CreatedAt >= mw.CreatedAt) &&
-                    e.CreatedAt >= from &&
-                    e.CreatedAt <= to
-                )
-                .ToListAsync();
+            return entries;
         }
 
-        public async Task<IEnumerable<Entry>> GetWorkerEntriesAsync(string workerMAC, DateTime from, DateTime to)
+        public async Task<IEnumerable<Entry>> GetWorkerEntriesAsync(string workerMac, DateTime from, DateTime to)
         {
-            int? workerId = await _context.Workers
-                .Where(w => w.MAC == workerMAC)
-                .Select(w => w.Id)
-                .FirstOrDefaultAsync();
+            var workerId = await this.GetWorkerIdByMac(workerMac);
 
             if (workerId == null)
                 return new List<Entry>();
 
-            DateTime? registeredAt = await _context.ManagerWorkers
+            DateTime? registeredAt = await context.ManagerWorkers
                 .Where(mw => mw.WorkerId == workerId && mw.DeletedAt == null)
                 .Select(mw => mw.CreatedAt)
                 .FirstOrDefaultAsync();
@@ -138,14 +137,15 @@ namespace TempTake_Server.Repository
             if (registeredAt == null)
                 return new List<Entry>();
 
-            return await _context.Entries
+            var entries = await context.Entries
                 .Where(e =>
                     e.CreatedAt >= registeredAt &&
                     e.WorkerId == workerId &&
                     e.CreatedAt >= from &&
                     e.CreatedAt <= to
-                )
-                .ToListAsync();
+                ).ToListAsync();
+
+            return entries;
         }
     }
 }
