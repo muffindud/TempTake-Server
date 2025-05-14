@@ -12,7 +12,7 @@ namespace TempTake_Server.Repository
             return await context.Workers.FindAsync(id);
         }
         
-        public async Task<int?> GetWorkerIdByMac(string mac)
+        public async Task<int?> GetWorkerIdByMacAsync(string mac)
         {
             return GetGetNonZeroOrNull(
                 await context.Workers

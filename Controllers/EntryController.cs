@@ -16,7 +16,7 @@ namespace TempTake_Server.Controllers
         [HttpGet("worker")]
         public async Task<IActionResult> GetWorkerEntries([FromBody] WorkerEntryDto entryDto)
         {
-            var workerId = await workerRepository.GetWorkerIdByMac(entryDto.WorkerMac);
+            var workerId = await workerRepository.GetWorkerIdByMacAsync(entryDto.WorkerMac);
             if (workerId == null) return NotFound("Worker not found");
             
             var entries = await entryRepository.GetWorkerEntriesAsync((int)workerId, entryDto.From, entryDto.To);
@@ -26,7 +26,7 @@ namespace TempTake_Server.Controllers
         [HttpGet("worker/all")]
         public async Task<IActionResult> GetAllWorkerEntries([FromBody] WorkerEntryDto entryDto)
         {
-            var workerId = await workerRepository.GetWorkerIdByMac(entryDto.WorkerMac);
+            var workerId = await workerRepository.GetWorkerIdByMacAsync(entryDto.WorkerMac);
             if (workerId == null) return NotFound("Worker not found");
             
             var entries = await entryRepository.GetAllWorkerEntriesAsync((int)workerId);
