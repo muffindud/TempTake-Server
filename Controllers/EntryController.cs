@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using TempTake_Server.Context;
 using TempTake_Server.Dtos.Entry;
 using TempTake_Server.Interfaces;
 

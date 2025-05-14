@@ -9,7 +9,7 @@ namespace TempTake_Server.Models
         public bool IsConfirmed { get; set; } = false;
         
         // Timestamps
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? DeletedAt { get; set; } = null;
         
         // Foreign Keys

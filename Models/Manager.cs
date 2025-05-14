@@ -12,6 +12,6 @@ namespace TempTake_Server.Models
         public required string MAC { get; set; }
 
         // Timestamps
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

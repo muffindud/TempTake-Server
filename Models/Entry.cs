@@ -21,7 +21,7 @@ namespace TempTake_Server.Models
         public decimal? Ppm { get; set; }
 
         // Timestamps
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         // Foreign Keys
         public int WorkerId { get; set; }

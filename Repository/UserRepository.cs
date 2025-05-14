@@ -52,25 +52,6 @@ namespace TempTake_Server.Repository
                 await context.Users.AddAsync(user);
                 await context.SaveChangesAsync();
             
-                var group = new Group
-                {
-                    Name = $"{user.TelegramUsername.Truncate(24)}'s group"
-                };
-                
-                await context.Groups.AddAsync(group);
-                await context.SaveChangesAsync();
-                
-                var groupUser = new GroupUser
-                {
-                    UserId = user.Id,
-                    GroupId = group.Id,
-                    IsAdmin = true,
-                    IsConfirmed = true
-                };
-                
-                await context.GroupUsers.AddAsync(groupUser);
-                await context.SaveChangesAsync();
-                
                 return user.Id;
             }
             catch (Exception e)
