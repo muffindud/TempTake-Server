@@ -4,12 +4,12 @@ namespace TempTake_Server.Interfaces
 {
     public interface IEntryRepository
     {
-        Task<IEnumerable<Entry>> GetWorkerEntriesAsync(string workerMAC, DateTime from, DateTime to);
-        Task<IEnumerable<Entry>> GetAllWorkerEntriesAsync(string workerMAC);
-        Task<Entry?> GetLastWorkerEntryAsync(string workerMAC);
+        Task<IEnumerable<Entry>> GetWorkerEntriesAsync(int workerId, DateTime from, DateTime to);
+        Task<IEnumerable<Entry>> GetAllWorkerEntriesAsync(int workerId);
+        Task<Entry?> GetLastWorkerEntryAsync(int workerId);
 
-        Task<IEnumerable<Entry>> GetManagerEntriesAsync(string managerMAC, DateTime from, DateTime to);
-        Task<IEnumerable<Entry>> GetAllManagerEntriesAsync(string managerMAC);
-        Task<Entry?> GetLastManagerEntryAsync(string managerMAC);
+        Task<IEnumerable<Entry>> GetManagerEntriesAsync(int managerId, DateTime from, DateTime to);
+        Task<IEnumerable<Entry>> GetAllManagerEntriesAsync(int managerId);
+        Task<Entry?> GetLastManagerEntryAsync(int managerId);
     }
 }

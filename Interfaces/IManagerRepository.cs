@@ -8,8 +8,9 @@ namespace TempTake_Server.Interfaces
 {
     public interface IManagerRepository
     {
-        public Task<Manager?> GetManagerByMACAsync(string mac);
+        public Task<Manager?> GetManagerByMacAsync(string mac);
+        public Task<int?> GetManagerIdByMac(string managerMac);
         public Task<Manager?> GetManagerByIdAsync(int id);
-        public Task<IEnumerable<Worker>> GetManagerWorkersAsync(int managerId);
+        public Task<IEnumerable<Worker>> GetManagerWorkersAsync(int id);
     }
 }

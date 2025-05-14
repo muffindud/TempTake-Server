@@ -4,12 +4,12 @@ using TempTake_Server.Interfaces;
 using TempTake_Server.Repository;
 
 
-int serverPort = int.Parse(Environment.GetEnvironmentVariable("SERVER_PORT") ?? "8080");
-string dbServer = Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost";
-string dbName = Environment.GetEnvironmentVariable("DB_NAME") ?? "temptake";
-string dbUser = Environment.GetEnvironmentVariable("DB_USER") ?? "postgres";
-string dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "postgres";
-string connectionString = $"Server={dbServer};Database={dbName};User Id={dbUser};Password={dbPassword};";
+var serverPort = int.Parse(Environment.GetEnvironmentVariable("SERVER_PORT") ?? "8080");
+var dbServer = Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost";
+var dbName = Environment.GetEnvironmentVariable("DB_NAME") ?? "temptake";
+var dbUser = Environment.GetEnvironmentVariable("DB_USER") ?? "postgres";
+var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "postgres";
+var connectionString = $"Server={dbServer};Database={dbName};User Id={dbUser};Password={dbPassword};";
 
 var builder = WebApplication.CreateBuilder(args);
 

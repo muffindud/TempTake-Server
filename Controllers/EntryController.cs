@@ -7,53 +7,49 @@ namespace TempTake_Server.Controllers
 {
     [Route("api/entry")]
     [ApiController]
-    public class EntryController : ControllerBase
+    public class EntryController(
+        IEntryRepository entryRepository,
+        IManagerRepository managerRepository,
+        IWorkerRepository workerRepository)
+        : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
-        private readonly IEntryRepository _entryRepository;
-
-        public EntryController(ApplicationDbContext context, IEntryRepository entryRepository) {
-            _context = context;
-            _entryRepository = entryRepository;
-        }
-
         [HttpGet("worker")]
         public async Task<IActionResult> GetWorkerEntries([FromBody] WorkerEntryDto entryDto)
         {
-            if (entryDto.WorkerMAC == null)
-                return BadRequest("WorkerMAC is required");
-
-            var entries = await _entryRepository.GetWorkerEntriesAsync(entryDto.WorkerMAC, entryDto.From, entryDto.To);
+            var workerId = await workerRepository.GetWorkerIdByMac(entryDto.WorkerMac);
+            if (workerId == null) return NotFound("Worker not found");
+            
+            var entries = await entryRepository.GetWorkerEntriesAsync((int)workerId, entryDto.From, entryDto.To);
             return Ok(entries);
         }
 
         [HttpGet("worker/all")]
         public async Task<IActionResult> GetAllWorkerEntries([FromBody] WorkerEntryDto entryDto)
         {
-            if (entryDto.WorkerMAC == null)
-                return BadRequest("WorkerMAC is required");
-
-            var entries = await _entryRepository.GetAllWorkerEntriesAsync(entryDto.WorkerMAC);
+            var workerId = await workerRepository.GetWorkerIdByMac(entryDto.WorkerMac);
+            if (workerId == null) return NotFound("Worker not found");
+            
+            var entries = await entryRepository.GetAllWorkerEntriesAsync((int)workerId);
             return Ok(entries);
         }
 
         [HttpGet("manager")]
         public async Task<IActionResult> GetManagerEntries([FromBody] ManagerEntryDto entryDto)
         {
-            if (entryDto.ManagerMAC == null)
-                return BadRequest("ManagerMAC is required");
-
-            var entries = await _entryRepository.GetManagerEntriesAsync(entryDto.ManagerMAC, entryDto.From, entryDto.To);
+            var managerId = await managerRepository.GetManagerIdByMac(entryDto.ManagerMac);
+            if (managerId == null) return NotFound("Manager not found");
+            
+            var entries = await entryRepository.GetManagerEntriesAsync((int)managerId, entryDto.From, entryDto.To);
             return Ok(entries);
         }
 
         [HttpGet("manager/all")]
         public async Task<IActionResult> GetAllManagerEntries([FromBody] ManagerEntryDto entryDto)
         {
-            if (entryDto.ManagerMAC == null)
-                return BadRequest("ManagerMAC is required");
-
-            var entries = await _entryRepository.GetAllManagerEntriesAsync(entryDto.ManagerMAC);
+            var managerId = await managerRepository.GetManagerIdByMac(entryDto.ManagerMac);
+            if (managerId == null) return NotFound("Manager not found");
+            
+            var entries = await entryRepository.GetAllManagerEntriesAsync((int)managerId);
             return Ok(entries);
         }
     }

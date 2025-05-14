@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using TempTake_Server.Context;
 using TempTake_Server.Interfaces;
@@ -9,31 +5,34 @@ using TempTake_Server.Models;
 
 namespace TempTake_Server.Repository
 {
-    public class ManagerRepository : IManagerRepository
+    public class ManagerRepository(ApplicationDbContext context) : RepositoryUtils, IManagerRepository
     {
-        private readonly ApplicationDbContext _context;
-
-        public ManagerRepository(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
         public async Task<Manager?> GetManagerByIdAsync(int id)
         {
-            return await _context.Managers.FindAsync(id);
+            return await context.Managers.FindAsync(id);
         }
 
-        public async Task<Manager?> GetManagerByMACAsync(string mac)
+        public async Task<int?> GetManagerIdByMac(string mac)
         {
-            return await _context.Managers
+            return GetGetNonZeroOrNull(
+                await context.Managers
+                    .Where(m => m.MAC == mac)
+                    .Select(m => m.Id)
+                    .SingleOrDefaultAsync()
+            );
+        }
+
+        public async Task<Manager?> GetManagerByMacAsync(string mac)
+        {
+            return await context.Managers
                 .Where(m => m.MAC == mac)
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<Worker>> GetManagerWorkersAsync(int managerId)
+        public async Task<IEnumerable<Worker>> GetManagerWorkersAsync(int id)
         {
-            return await _context.ManagerWorkers
-                .Where(mw => mw.ManagerId == managerId)
+            return await context.ManagerWorkers
+                .Where(mw => mw.ManagerId == id)
                 .Select(mw => mw.Worker)
                 .ToListAsync();
         }
