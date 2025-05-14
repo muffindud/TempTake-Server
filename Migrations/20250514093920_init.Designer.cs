@@ -12,7 +12,7 @@ using TempTake_Server.Context;
 namespace TempTake_Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250425122228_init")]
+    [Migration("20250514093920_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -56,6 +56,93 @@ namespace TempTake_Server.Migrations
                     b.HasIndex("WorkerId");
 
                     b.ToTable("Entries");
+                });
+
+            modelBuilder.Entity("TempTake_Server.Models.Group", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("varchar(32)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Groups");
+                });
+
+            modelBuilder.Entity("TempTake_Server.Models.GroupManager", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("GroupId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ManagerId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GroupId");
+
+                    b.HasIndex("ManagerId");
+
+                    b.ToTable("GroupManagers");
+                });
+
+            modelBuilder.Entity("TempTake_Server.Models.GroupUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("GroupId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsAdmin")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GroupId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("GroupUsers");
                 });
 
             modelBuilder.Entity("TempTake_Server.Models.Manager", b =>
@@ -121,38 +208,13 @@ namespace TempTake_Server.Migrations
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("TelegramUserId")
+                        .IsRequired()
+                        .HasColumnType("varchar(32)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("TempTake_Server.Models.UserManager", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("ManagerId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ManagerId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserManagers");
                 });
 
             modelBuilder.Entity("TempTake_Server.Models.Worker", b =>
@@ -186,6 +248,44 @@ namespace TempTake_Server.Migrations
                     b.Navigation("Worker");
                 });
 
+            modelBuilder.Entity("TempTake_Server.Models.GroupManager", b =>
+                {
+                    b.HasOne("TempTake_Server.Models.Group", "Group")
+                        .WithMany()
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TempTake_Server.Models.Manager", "Manager")
+                        .WithMany()
+                        .HasForeignKey("ManagerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Group");
+
+                    b.Navigation("Manager");
+                });
+
+            modelBuilder.Entity("TempTake_Server.Models.GroupUser", b =>
+                {
+                    b.HasOne("TempTake_Server.Models.Group", "Group")
+                        .WithMany()
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TempTake_Server.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Group");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("TempTake_Server.Models.ManagerWorker", b =>
                 {
                     b.HasOne("TempTake_Server.Models.Manager", "Manager")
@@ -203,25 +303,6 @@ namespace TempTake_Server.Migrations
                     b.Navigation("Manager");
 
                     b.Navigation("Worker");
-                });
-
-            modelBuilder.Entity("TempTake_Server.Models.UserManager", b =>
-                {
-                    b.HasOne("TempTake_Server.Models.Manager", "Manager")
-                        .WithMany()
-                        .HasForeignKey("ManagerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TempTake_Server.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Manager");
-
-                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

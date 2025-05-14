@@ -13,6 +13,21 @@ namespace TempTake_Server.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Groups",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "varchar(32)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Groups", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Managers",
                 columns: table => new
                 {
@@ -32,6 +47,7 @@ namespace TempTake_Server.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    TelegramUserId = table.Column<string>(type: "varchar(32)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
@@ -55,27 +71,57 @@ namespace TempTake_Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserManagers",
+                name: "GroupManagers",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    GroupId = table.Column<int>(type: "integer", nullable: false),
                     ManagerId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserManagers", x => x.Id);
+                    table.PrimaryKey("PK_GroupManagers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserManagers_Managers_ManagerId",
+                        name: "FK_GroupManagers_Groups_GroupId",
+                        column: x => x.GroupId,
+                        principalTable: "Groups",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_GroupManagers_Managers_ManagerId",
                         column: x => x.ManagerId,
                         principalTable: "Managers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "GroupUsers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    IsAdmin = table.Column<bool>(type: "boolean", nullable: false),
+                    IsConfirmed = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    GroupId = table.Column<int>(type: "integer", nullable: false),
+                    UserId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GroupUsers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserManagers_Users_UserId",
+                        name: "FK_GroupUsers_Groups_GroupId",
+                        column: x => x.GroupId,
+                        principalTable: "Groups",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_GroupUsers_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -140,6 +186,26 @@ namespace TempTake_Server.Migrations
                 column: "WorkerId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_GroupManagers_GroupId",
+                table: "GroupManagers",
+                column: "GroupId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GroupManagers_ManagerId",
+                table: "GroupManagers",
+                column: "ManagerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GroupUsers_GroupId",
+                table: "GroupUsers",
+                column: "GroupId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GroupUsers_UserId",
+                table: "GroupUsers",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ManagerWorkers_ManagerId",
                 table: "ManagerWorkers",
                 column: "ManagerId");
@@ -148,16 +214,6 @@ namespace TempTake_Server.Migrations
                 name: "IX_ManagerWorkers_WorkerId",
                 table: "ManagerWorkers",
                 column: "WorkerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserManagers_ManagerId",
-                table: "UserManagers",
-                column: "ManagerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserManagers_UserId",
-                table: "UserManagers",
-                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -167,19 +223,25 @@ namespace TempTake_Server.Migrations
                 name: "Entries");
 
             migrationBuilder.DropTable(
+                name: "GroupManagers");
+
+            migrationBuilder.DropTable(
+                name: "GroupUsers");
+
+            migrationBuilder.DropTable(
                 name: "ManagerWorkers");
 
             migrationBuilder.DropTable(
-                name: "UserManagers");
+                name: "Groups");
 
             migrationBuilder.DropTable(
-                name: "Workers");
+                name: "Users");
 
             migrationBuilder.DropTable(
                 name: "Managers");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "Workers");
         }
     }
 }
