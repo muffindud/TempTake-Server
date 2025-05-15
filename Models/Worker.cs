@@ -1,17 +1,24 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TempTake_Server.Models
 {
+    [Table("worker")]
     public class Worker
     {
         // Primary Key
+        [Key]
+        [Column("id")]
         public int Id { get; set; }
 
         // Data
-        [Column(TypeName = "varchar(12)")]
-        public required string MAC { get; set; }
+        [Column("mac", TypeName = "varchar(12)")]
+        [Required]
+        public required string Mac { get; set; }
 
         // Timestamps
+        [Column("created_at")]
+        [Required]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

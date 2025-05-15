@@ -11,6 +11,6 @@ namespace TempTake_Server.Interfaces
         public Task<Manager?> GetManagerByMacAsync(string mac);
         public Task<int?> GetManagerIdByMac(string managerMac);
         public Task<Manager?> GetManagerByIdAsync(int id);
-        public Task<IEnumerable<Worker>> GetManagerWorkersAsync(int id);
+        public Task<List<Worker?>> GetManagerWorkersAsync(int id);
     }
 }

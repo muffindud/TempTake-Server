@@ -16,7 +16,7 @@ namespace TempTake_Server.Repository
         {
             return GetGetNonZeroOrNull(
                 await context.Workers
-                    .Where(w => w.MAC == mac)
+                    .Where(w => w.Mac == mac)
                     .Select(w => w.Id)
                     .SingleOrDefaultAsync()
             );
@@ -25,7 +25,7 @@ namespace TempTake_Server.Repository
         public async Task<Worker?> GetWorkerByMacAsync(string mac)
         {
             return await context.Workers
-                .Where(w => w.MAC == mac)
+                .Where(w => w.Mac == mac)
                 .SingleOrDefaultAsync();
         }
 

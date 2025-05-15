@@ -26,77 +26,93 @@ namespace TempTake_Server.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<decimal?>("Humidity")
-                        .HasColumnType("decimal(18, 2)");
+                        .HasColumnType("decimal(18, 2)")
+                        .HasColumnName("humidity_perc");
+
+                    b.Property<int>("ManagerWorkerId")
+                        .HasColumnType("integer")
+                        .HasColumnName("manager_worker_id");
 
                     b.Property<decimal?>("Ppm")
-                        .HasColumnType("decimal(18, 2)");
+                        .HasColumnType("decimal(18, 2)")
+                        .HasColumnName("ppm");
 
                     b.Property<decimal?>("Pressure")
-                        .HasColumnType("decimal(18, 2)");
+                        .HasColumnType("decimal(18, 2)")
+                        .HasColumnName("pressure_mmhg");
 
                     b.Property<decimal?>("Temperature")
-                        .HasColumnType("decimal(18, 2)");
-
-                    b.Property<int>("WorkerId")
-                        .HasColumnType("integer");
+                        .HasColumnType("decimal(18, 2)")
+                        .HasColumnName("temperature_c");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("WorkerId");
+                    b.HasIndex("ManagerWorkerId");
 
-                    b.ToTable("Entries");
+                    b.ToTable("entry");
                 });
 
             modelBuilder.Entity("TempTake_Server.Models.Group", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("varchar(32)");
+                        .HasColumnType("varchar(32)")
+                        .HasColumnName("name");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Groups");
+                    b.ToTable("group");
                 });
 
             modelBuilder.Entity("TempTake_Server.Models.GroupManager", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
 
                     b.Property<int>("GroupId")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("group_id");
 
                     b.Property<int>("ManagerId")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("manager_id");
 
                     b.HasKey("Id");
 
@@ -104,34 +120,41 @@ namespace TempTake_Server.Migrations
 
                     b.HasIndex("ManagerId");
 
-                    b.ToTable("GroupManagers");
+                    b.ToTable("group_manager");
                 });
 
             modelBuilder.Entity("TempTake_Server.Models.GroupUser", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
 
                     b.Property<int>("GroupId")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("group_id");
 
                     b.Property<bool>("IsAdmin")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_admin");
 
                     b.Property<bool>("IsConfirmed")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_confirmed");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("user_id");
 
                     b.HasKey("Id");
 
@@ -139,48 +162,56 @@ namespace TempTake_Server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("GroupUsers");
+                    b.ToTable("group_user");
                 });
 
             modelBuilder.Entity("TempTake_Server.Models.Manager", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
-                    b.Property<string>("MAC")
+                    b.Property<string>("Mac")
                         .IsRequired()
-                        .HasColumnType("varchar(12)");
+                        .HasColumnType("varchar(12)")
+                        .HasColumnName("mac");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Managers");
+                    b.ToTable("manager");
                 });
 
             modelBuilder.Entity("TempTake_Server.Models.ManagerWorker", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
 
                     b.Property<int>("ManagerId")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("manager_id");
 
                     b.Property<int>("WorkerId")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("worker_id");
 
                     b.HasKey("Id");
 
@@ -188,65 +219,73 @@ namespace TempTake_Server.Migrations
 
                     b.HasIndex("WorkerId");
 
-                    b.ToTable("ManagerWorkers");
+                    b.ToTable("manager_worker");
                 });
 
             modelBuilder.Entity("TempTake_Server.Models.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
 
                     b.Property<string>("TelegramUserId")
                         .IsRequired()
-                        .HasColumnType("varchar(32)");
+                        .HasColumnType("varchar(32)")
+                        .HasColumnName("telegram_user_id");
 
                     b.Property<string>("TelegramUsername")
                         .IsRequired()
-                        .HasColumnType("varchar(32)");
+                        .HasColumnType("varchar(32)")
+                        .HasColumnName("telegram_username");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("user");
                 });
 
             modelBuilder.Entity("TempTake_Server.Models.Worker", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
-                    b.Property<string>("MAC")
+                    b.Property<string>("Mac")
                         .IsRequired()
-                        .HasColumnType("varchar(12)");
+                        .HasColumnType("varchar(12)")
+                        .HasColumnName("mac");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Workers");
+                    b.ToTable("worker");
                 });
 
             modelBuilder.Entity("TempTake_Server.Models.Entry", b =>
                 {
-                    b.HasOne("TempTake_Server.Models.Worker", "Worker")
+                    b.HasOne("TempTake_Server.Models.ManagerWorker", "ManagerWorker")
                         .WithMany()
-                        .HasForeignKey("WorkerId")
+                        .HasForeignKey("ManagerWorkerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Worker");
+                    b.Navigation("ManagerWorker");
                 });
 
             modelBuilder.Entity("TempTake_Server.Models.GroupManager", b =>

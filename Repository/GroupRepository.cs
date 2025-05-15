@@ -124,7 +124,7 @@ namespace TempTake_Server.Repository
             }
         }
 
-        public async Task<IEnumerable<User>> GetUsersInGroupAsync(int groupId)
+        public async Task<List<User?>> GetUsersInGroupAsync(int groupId)
         {
             return await context.GroupUsers
                 .Where(gu => gu.GroupId == groupId && gu.IsConfirmed && gu.DeletedAt == null)

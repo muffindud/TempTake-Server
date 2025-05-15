@@ -10,6 +10,6 @@ namespace TempTake_Server.Interfaces
         public Task<int?> AddUserToGroupAsync(int userId, int groupId);
         public Task<int?> ConfirmUserGroupJoinAsync(int userId, int groupId);
         public Task<int?> RemoveUserFromGroupAsync(int userId, int groupId);
-        public Task<IEnumerable<User>> GetUsersInGroupAsync(int groupId);
+        public Task<List<User?>> GetUsersInGroupAsync(int groupId);
     }
 }

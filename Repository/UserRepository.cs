@@ -31,7 +31,7 @@ namespace TempTake_Server.Repository
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Group>> GetGroupsForUserIdAsync(int userId)
+        public async Task<List<Group?>> GetGroupsForUserIdAsync(int userId)
         {
             return await context.GroupUsers
                 .Where(gu => gu.UserId == userId)
