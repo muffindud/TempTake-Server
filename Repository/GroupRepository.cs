@@ -124,6 +124,20 @@ namespace TempTake_Server.Repository
             }
         }
 
+        public async Task<int?> AddManagerToGroupAsync(int groupId, int managerId)
+        {
+            var groupManager = new GroupManager
+            {
+                GroupId = groupId,
+                ManagerId = managerId
+            };
+            
+            await context.GroupManagers.AddAsync(groupManager);
+            await context.SaveChangesAsync();
+            
+            return groupManager.Id;
+        }
+
         public async Task<List<User?>> GetUsersInGroupAsync(int groupId)
         {
             return await context.GroupUsers

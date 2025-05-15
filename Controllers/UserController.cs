@@ -6,6 +6,7 @@ using TempTake_Server.Interfaces;
 namespace TempTake_Server.Controllers
 {
     [Route("api/user")]
+    [ApiController]
     public class UserController(
         IUserRepository userRepository, 
         IGroupRepository groupRepository)
@@ -40,6 +41,16 @@ namespace TempTake_Server.Controllers
             var groupAdminId = await groupRepository.SetGroupAdminAsync((int)userId, (int)groupId);
             if (groupAdminId == null) return BadRequest("Failed to set group admin");
             return Ok(userId);
+        }
+        
+        [HttpGet("group")]
+        public async Task<IActionResult> GetUserGroupsAsync([FromBody] UserDto userDto)
+        {
+            var userId = await userRepository.GetUserIdByTelegramIdAsync(userDto.TelegramId);
+            if (userId == null) return NotFound("User not found");
+
+            var groups = await userRepository.GetGroupsForUserIdAsync((int)userId);
+            return Ok(groups);
         }
     }
 }

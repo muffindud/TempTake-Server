@@ -13,6 +13,7 @@ namespace TempTake_Server.Models
 
         // Data
         [Column("mac", TypeName = "varchar(12)")]
+        [Required]
         public required string Mac { get; set; }
 
         // Timestamps
