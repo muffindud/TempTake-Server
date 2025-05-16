@@ -9,20 +9,10 @@ namespace TempTake_Server.Repository
     {
         public async Task<IEnumerable<Entry>> GetAllManagerEntriesAsync(int managerId)
         {
-            // var managerWorkers = await context.ManagerWorkers
-            //     .Where(mw => mw.ManagerId == managerId && mw.DeletedAt == null)
-            //     .Select(mw => mw.Id)
-            //     .ToListAsync();
-            //
-            // var entries = await context.Entries
-            //     .Where(e =>
-            //         managerWorkers.Any(mw => mw == e.ManagerWorkerId)
-            //     ).ToListAsync();
-
             var entries = await context.Entries
                 .Where(e =>
                     context.ManagerWorkers
-                        .Where(mw => mw.ManagerId == managerId && mw.DeletedAt == null)
+                        .Where(mw => mw.ManagerId == managerId)
                         .Select(mw => mw.Id)
                         .Contains(e.ManagerWorkerId)
                 ).ToListAsync();
@@ -48,7 +38,7 @@ namespace TempTake_Server.Repository
             var entry = await context.Entries
                 .Where(e =>
                     context.ManagerWorkers
-                        .Where(mw => mw.ManagerId == managerId && mw.DeletedAt == null)
+                        .Where(mw => mw.ManagerId == managerId)
                         .Select(mw => mw.Id)
                         .Contains(e.ManagerWorkerId)
                 ).OrderByDescending(e => e.CreatedAt)
@@ -76,7 +66,7 @@ namespace TempTake_Server.Repository
             var entries = await context.Entries
                 .Where(e =>
                     context.ManagerWorkers
-                        .Where(mw => mw.ManagerId == managerId && mw.DeletedAt == null)
+                        .Where(mw => mw.ManagerId == managerId)
                         .Select(mw => mw.Id)
                         .Contains(e.ManagerWorkerId) &&
                     e.CreatedAt >= from &&
