@@ -15,7 +15,7 @@ namespace TempTake_Server.Repository
                 .SingleOrDefaultAsync();
         }
 
-        public async Task<int?> CreateGroupAsync(string name)
+        public async Task<Group?> CreateGroupAsync(string name)
         {
             try
             {
@@ -27,7 +27,7 @@ namespace TempTake_Server.Repository
                 await context.Groups.AddAsync(group);
                 await context.SaveChangesAsync();
                 
-                return group.Id;
+                return group;
             }
             catch (Exception e)
             {

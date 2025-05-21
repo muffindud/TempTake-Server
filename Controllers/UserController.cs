@@ -15,35 +15,34 @@ namespace TempTake_Server.Controllers
         [HttpGet]
         public async Task<IActionResult> GetUserByTelegramId([FromBody] UserDto userDto)
         {
-            var userId = await userRepository.GetUserIdByTelegramIdAsync(userDto.TelegramId);
-            if (userId == null) return NotFound("User not found");
-            
-            var user = await userRepository.GetUserByIdAsync((int)userId);
-            
+            var user = await userRepository.GetUserByTelegramIdAsync(userDto.TelegramId);
+            if (user == null) return NotFound("User not found");
+
             return Ok(user);
         }
         
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromBody] UserDto userDto)
         {
-            var userId = await userRepository.GetUserIdByTelegramIdAsync(userDto.TelegramId);
-            if (userId != null) return BadRequest("User already exists");
+            var user = await userRepository.GetUserByTelegramIdAsync(userDto.TelegramId);
+            if (user != null) return Ok(user);
             
-            userId = await userRepository.CreateUserAsync(userDto.TelegramId, userDto.TelegramUsername);
-            if (userId == null) return BadRequest("Failed to create user");
+            user = await userRepository.CreateUserAsync(userDto.TelegramId, userDto.TelegramUsername);
+            if (user == null) return BadRequest("Failed to create user");
             
-            var groupId = await groupRepository.CreateGroupAsync($"{userDto.TelegramUsername.Truncate(24)}'s group");
-            if (groupId == null) return BadRequest("Failed to create group");
+            var group = await groupRepository.CreateGroupAsync($"{userDto.TelegramUsername.Truncate(24)}'s group");
+            if (group == null) return BadRequest("Failed to create group");
             
-            var groupUserId = await groupRepository.AddUserToGroupAsync((int)userId, (int)groupId);
+            var groupUserId = await groupRepository.AddUserToGroupAsync(user.Id, group.Id);
             if (groupUserId == null) return BadRequest("Failed to add user to group");
             
-            groupUserId = await groupRepository.ConfirmUserGroupJoinAsync((int)userId, (int)groupId);
+            groupUserId = await groupRepository.ConfirmUserGroupJoinAsync(user.Id, group.Id);
             if (groupUserId == null) return BadRequest("Failed to confirm user group join");
             
-            var groupAdminId = await groupRepository.SetGroupAdminAsync((int)userId, (int)groupId);
+            var groupAdminId = await groupRepository.SetGroupAdminAsync(user.Id, group.Id);
             if (groupAdminId == null) return BadRequest("Failed to set group admin");
-            return Ok(userId);
+            
+            return Ok(user);
         }
         
         [HttpGet("group")]

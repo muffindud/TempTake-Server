@@ -18,6 +18,13 @@ namespace TempTake_Server.Repository
             );
         }
 
+        public async Task<User?> GetUserByTelegramIdAsync(string telegramId)
+        {
+            return await context.Users
+                .Where(u => u.TelegramUserId == telegramId)
+                .SingleOrDefaultAsync();
+        }
+        
         public async Task<User?> GetUserByIdAsync(int id)
         {
             return await context.Users.FindAsync(id);
@@ -39,7 +46,7 @@ namespace TempTake_Server.Repository
                 .ToListAsync();
         }
 
-        public async Task<int?> CreateUserAsync(string telegramId, string telegramUsername)
+        public async Task<User?> CreateUserAsync(string telegramId, string telegramUsername)
         {
             try
             {
@@ -52,14 +59,13 @@ namespace TempTake_Server.Repository
                 await context.Users.AddAsync(user);
                 await context.SaveChangesAsync();
             
-                return user.Id;
+                return user;
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
                 return null;
             }
-
         }
     }
 }
