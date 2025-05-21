@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TempTake_Server.Dtos.Group;
 using TempTake_Server.Interfaces;
@@ -6,6 +7,7 @@ namespace TempTake_Server.Controllers
 {
     [Route("api/group")]
     [ApiController]
+    [Authorize]
     public class GroupController(
         IGroupRepository groupRepository, 
         IManagerRepository managerRepository)

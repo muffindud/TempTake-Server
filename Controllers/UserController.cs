@@ -1,4 +1,5 @@
 using Humanizer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TempTake_Server.Dtos.Entry;
 using TempTake_Server.Interfaces;
@@ -6,6 +7,7 @@ using TempTake_Server.Interfaces;
 namespace TempTake_Server.Controllers
 {
     [Route("api/user")]
+    [Authorize]
     [ApiController]
     public class UserController(
         IUserRepository userRepository, 

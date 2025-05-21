@@ -1,6 +1,5 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using TempTake_Server.Context;
@@ -17,29 +16,28 @@ var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "postgres"
 var connectionString = $"Server={dbServer};Database={dbName};User Id={dbUser};Password={dbPassword};";
 
 var builder = WebApplication.CreateBuilder(args);
-var requireAuthPolicy = new AuthorizationPolicyBuilder()
-    .RequireAuthenticatedUser()
-    .Build();
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
     .AddJwtBearer(jwtOptions =>
     {
         jwtOptions.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(internalSecret)),
+            ValidateIssuerSigningKey = true,
             ValidateIssuer = false,
             ValidateAudience = false,
-            ValidateLifetime = true,
-            ClockSkew = TimeSpan.Zero
+            ValidateLifetime = true
         };
     });
-builder.Services.AddAuthorizationBuilder()
-    .SetDefaultPolicy(requireAuthPolicy);
+builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.WebHost.UseUrls($"http://*:{serverPort}");
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
+builder.WebHost.UseUrls($"http://*:{serverPort}");
 
 builder.Services.AddScoped<IEntryRepository, EntryRepository>();
 builder.Services.AddScoped<IWorkerRepository, WorkerRepository>();
@@ -55,9 +53,9 @@ using(var scope = app.Services.CreateScope())
     context.Database.Migrate();
 }
 
-app.UseHttpsRedirection();
-app.UseAuthorization();
+// app.UseHttpsRedirection();
 app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
