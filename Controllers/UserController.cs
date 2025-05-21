@@ -26,7 +26,10 @@ namespace TempTake_Server.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromBody] UserDto userDto)
         {
-            var userId = await userRepository.CreateUserAsync(userDto.TelegramId, userDto.TelegramUsername);
+            var userId = await userRepository.GetUserIdByTelegramIdAsync(userDto.TelegramId);
+            if (userId != null) return BadRequest("User already exists");
+            
+            userId = await userRepository.CreateUserAsync(userDto.TelegramId, userDto.TelegramUsername);
             if (userId == null) return BadRequest("Failed to create user");
             
             var groupId = await groupRepository.CreateGroupAsync($"{userDto.TelegramUsername.Truncate(24)}'s group");
