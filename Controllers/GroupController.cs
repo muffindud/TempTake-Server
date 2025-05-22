@@ -6,8 +6,8 @@ using TempTake_Server.Interfaces;
 namespace TempTake_Server.Controllers
 {
     [Route("api/group")]
-    [ApiController]
     [Authorize]
+    [ApiController]
     public class GroupController(
         IGroupRepository groupRepository, 
         IManagerRepository managerRepository)
@@ -18,6 +18,9 @@ namespace TempTake_Server.Controllers
         {
             var managerId = await managerRepository.GetManagerIdByMac(groupManagerDto.ManagerMac);
             if (managerId == null) return NotFound("Manager not found, connect it to internet");
+            
+            if (await groupRepository.IsManagerInGroupAsync((int)managerId, groupManagerDto.GroupId))
+                return BadRequest("Manager already in group");
             
             var groupUserId = await groupRepository.AddManagerToGroupAsync((int)managerId, groupManagerDto.GroupId);
             if (groupUserId == null) return BadRequest("Failed to add manager to group");

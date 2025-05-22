@@ -145,5 +145,11 @@ namespace TempTake_Server.Repository
                 .Select(gu => gu.User)
                 .ToListAsync();
         }
+
+        public Task<bool> IsManagerInGroupAsync(int managerId, int groupId)
+        {
+            return context.GroupManagers
+                .AnyAsync(gm => gm.ManagerId == managerId && gm.GroupId == groupId && gm.DeletedAt == null);
+        }
     }
 }
