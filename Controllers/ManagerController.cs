@@ -10,8 +10,8 @@ namespace TempTake_Server.Controllers
     [Authorize]
     public class ManagerController(
         IManagerRepository managerRepository,
-        IWorkerRepository workerRepository
-        ) : ControllerBase
+        IWorkerRepository workerRepository)
+        : ControllerBase
     {
         [HttpGet]
         public async Task<IActionResult> GetManagerByMac([FromBody] ManagerDto managerDto)
