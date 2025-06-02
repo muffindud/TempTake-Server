@@ -31,7 +31,7 @@ namespace TempTake_Server.Controllers
             if (await groupRepository.IsManagerInGroupAsync((int)managerId, groupManagerDto.GroupId))
                 return BadRequest("Manager already in group");
             
-            var groupUserId = await groupRepository.AddManagerToGroupAsync((int)managerId, groupManagerDto.GroupId);
+            var groupUserId = await groupRepository.AddManagerToGroupAsync(groupManagerDto.GroupId, (int)managerId);
             if (groupUserId == null) return BadRequest("Failed to add manager to group");
             
             return Ok(groupUserId);
