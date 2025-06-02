@@ -13,7 +13,7 @@ namespace TempTake_Server.Controllers
         IManagerRepository managerRepository)
         : ControllerBase
     {
-        [HttpPost("manager/add")]
+        [HttpPost("manager")]
         public async Task<IActionResult> AddManagerToGroup([FromBody] GroupManagerDto groupManagerDto)
         {
             var managerId = await managerRepository.GetManagerIdByMac(groupManagerDto.ManagerMac);
@@ -26,6 +26,36 @@ namespace TempTake_Server.Controllers
             if (groupUserId == null) return BadRequest("Failed to add manager to group");
             
             return Ok(groupUserId);
+        }
+        
+        [HttpGet("managers")]
+        public async Task<IActionResult> GetGroupManagers([FromBody] GroupDto groupDto)
+        {
+            var group = await groupRepository.GetGroupByIdAsync(groupDto.Id);
+            if (group == null) return NotFound("Group not found");
+            
+            var managers = await groupRepository.GetGroupManagersAsync(groupDto.Id);
+            return Ok(managers);
+        }
+
+        [HttpGet("users")]
+        public async Task<IActionResult> GetUsersInGroup([FromBody] GroupDto groupDto)
+        {
+            var group = await groupRepository.GetGroupByIdAsync(groupDto.Id);
+            if (group == null) return NotFound("Group not found");
+            
+            var users = await groupRepository.GetUsersInGroupAsync(groupDto.Id);
+            return Ok(users);
+        }
+
+        [HttpGet("workers")]
+        public async Task<IActionResult> GetWorkersInGroup([FromBody] GroupDto groupDto)
+        {
+            var group = await groupRepository.GetGroupByIdAsync(groupDto.Id);
+            if (group == null) return NotFound("Group not found");
+
+            var workers = await groupRepository.GetWorkersInGroupAsync(groupDto.Id);
+            return Ok(workers);
         }
     }
 }

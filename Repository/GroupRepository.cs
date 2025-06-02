@@ -146,10 +146,31 @@ namespace TempTake_Server.Repository
                 .ToListAsync();
         }
 
-        public Task<bool> IsManagerInGroupAsync(int managerId, int groupId)
+        public async Task<bool> IsManagerInGroupAsync(int managerId, int groupId)
         {
-            return context.GroupManagers
+            return await context.GroupManagers
                 .AnyAsync(gm => gm.ManagerId == managerId && gm.GroupId == groupId && gm.DeletedAt == null);
+        }
+
+        public async Task<List<Manager?>> GetGroupManagersAsync(int groupId)
+        {
+            return await context.GroupManagers
+                .Where(gm => gm.GroupId == groupId && gm.DeletedAt == null)
+                .Select(gm => gm.Manager)
+                .ToListAsync();
+        }
+        
+        public async Task<List<Worker?>> GetWorkersInGroupAsync(int groupId)
+        {
+            var managerIds = await context.GroupManagers
+                .Where(gm => gm.GroupId == groupId && gm.DeletedAt == null)
+                .Select(gm => gm.ManagerId)
+                .ToListAsync();
+            
+            return await context.ManagerWorkers
+                .Where(mw => managerIds.Contains(mw.ManagerId) && mw.DeletedAt == null)
+                .Select(mw => mw.Worker)
+                .ToListAsync();
         }
     }
 }

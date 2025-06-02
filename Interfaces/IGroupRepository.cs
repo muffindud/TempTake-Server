@@ -13,5 +13,7 @@ namespace TempTake_Server.Interfaces
         public Task<int?> AddManagerToGroupAsync(int groupId, int managerId);
         public Task<List<User?>> GetUsersInGroupAsync(int groupId);
         public Task<bool> IsManagerInGroupAsync(int managerId, int groupId);
+        public Task<List<Manager?>> GetGroupManagersAsync(int groupId);
+        public Task<List<Worker?>> GetWorkersInGroupAsync(int groupId);
     }
 }

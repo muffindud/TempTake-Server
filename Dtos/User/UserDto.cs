@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace TempTake_Server.Dtos.Entry
+namespace TempTake_Server.Dtos.User
 {
     public class UserDto
     {

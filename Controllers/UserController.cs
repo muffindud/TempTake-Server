@@ -2,6 +2,7 @@ using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TempTake_Server.Dtos.Entry;
+using TempTake_Server.Dtos.User;
 using TempTake_Server.Interfaces;
 
 namespace TempTake_Server.Controllers
@@ -47,7 +48,7 @@ namespace TempTake_Server.Controllers
             return Ok(user);
         }
         
-        [HttpGet("group")]
+        [HttpGet("groups")]
         public async Task<IActionResult> GetUserGroupsAsync([FromBody] UserDto userDto)
         {
             var userId = await userRepository.GetUserIdByTelegramIdAsync(userDto.TelegramId);
