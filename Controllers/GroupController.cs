@@ -13,6 +13,15 @@ namespace TempTake_Server.Controllers
         IManagerRepository managerRepository)
         : ControllerBase
     {
+        [HttpGet]
+        public async Task<IActionResult> GetGroupById([FromBody] GroupDto groupDto)
+        {
+            var group = await groupRepository.GetGroupByIdAsync(groupDto.Id);
+            if (group == null) return NotFound("Group not found");
+            
+            return Ok(group);
+        }
+        
         [HttpPost("manager")]
         public async Task<IActionResult> AddManagerToGroup([FromBody] GroupManagerDto groupManagerDto)
         {
