@@ -15,40 +15,80 @@ namespace TempTake_Server.Controllers
         : ControllerBase
     {
         [HttpGet("worker")]
-        public async Task<IActionResult> GetWorkerEntries([FromBody] WorkerEntryDto entryDto)
+        public async Task<IActionResult> GetWorkerEntries([FromBody] ModuleEntryDto entryDto)
         {
-            var workerId = await workerRepository.GetWorkerIdByMacAsync(entryDto.WorkerMac);
-            if (workerId == null) return NotFound("Worker not found");
+            var workerId = entryDto.Id;
+            
+            if (workerId == null)
+            {
+                if (string.IsNullOrEmpty(entryDto.ModuleMac))
+                {
+                    return BadRequest("Module MAC address or id is required");
+                }
+
+                workerId = await workerRepository.GetWorkerIdByMacAsync(entryDto.ModuleMac);
+                if (workerId == null) return NotFound("Worker not found");
+            }
             
             var entries = await entryRepository.GetWorkerEntriesAsync((int)workerId, entryDto.From, entryDto.To);
             return Ok(entries);
         }
 
         [HttpGet("worker/all")]
-        public async Task<IActionResult> GetAllWorkerEntries([FromBody] WorkerEntryDto entryDto)
+        public async Task<IActionResult> GetAllWorkerEntries([FromBody] ModuleEntryDto entryDto)
         {
-            var workerId = await workerRepository.GetWorkerIdByMacAsync(entryDto.WorkerMac);
-            if (workerId == null) return NotFound("Worker not found");
+            var workerId = entryDto.Id;
+            
+            if (workerId == null)
+            {
+                if (string.IsNullOrEmpty(entryDto.ModuleMac))
+                {
+                    return BadRequest("Module MAC address or id is required");
+                }
+
+                workerId = await managerRepository.GetManagerIdByMac(entryDto.ModuleMac);
+                if (workerId == null) return NotFound("Manager not found");
+            }
             
             var entries = await entryRepository.GetAllWorkerEntriesAsync((int)workerId);
             return Ok(entries);
         }
 
         [HttpGet("manager")]
-        public async Task<IActionResult> GetManagerEntries([FromBody] ManagerEntryDto entryDto)
+        public async Task<IActionResult> GetManagerEntries([FromBody] ModuleEntryDto entryDto)
         {
-            var managerId = await managerRepository.GetManagerIdByMac(entryDto.ManagerMac);
-            if (managerId == null) return NotFound("Manager not found");
+            var managerId = entryDto.Id;
+            
+            if (managerId == null)
+            {
+                if (string.IsNullOrEmpty(entryDto.ModuleMac))
+                {
+                    return BadRequest("Manager MAC address or id is required");
+                }
+
+                managerId = await managerRepository.GetManagerIdByMac(entryDto.ModuleMac);
+                if (managerId == null) return NotFound("Manager not found");
+            }
             
             var entries = await entryRepository.GetManagerEntriesAsync((int)managerId, entryDto.From, entryDto.To);
             return Ok(entries);
         }
 
         [HttpGet("manager/all")]
-        public async Task<IActionResult> GetAllManagerEntries([FromBody] ManagerEntryDto entryDto)
+        public async Task<IActionResult> GetAllManagerEntries([FromBody] ModuleEntryDto entryDto)
         {
-            var managerId = await managerRepository.GetManagerIdByMac(entryDto.ManagerMac);
-            if (managerId == null) return NotFound("Manager not found");
+            var managerId = entryDto.Id;
+            
+            if (managerId == null)
+            {
+                if (string.IsNullOrEmpty(entryDto.ModuleMac))
+                {
+                    return BadRequest("Manager MAC address or id is required");
+                }
+
+                managerId = await managerRepository.GetManagerIdByMac(entryDto.ModuleMac);
+                if (managerId == null) return NotFound("Manager not found");
+            }
             
             var entries = await entryRepository.GetAllManagerEntriesAsync((int)managerId);
             return Ok(entries);
