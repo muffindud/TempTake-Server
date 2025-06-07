@@ -7,7 +7,7 @@ namespace TempTake_Server.Repository
 {
     public class EntryRepository(ApplicationDbContext context) : IEntryRepository
     {
-        public async Task<IEnumerable<Entry>> GetAllManagerEntriesAsync(int managerId)
+        public async Task<IEnumerable<Entry>> GetAllManagerEntriesAsync(int managerId, int count, int page)
         {
             var entries = await context.Entries
                 .Where(e =>
@@ -15,12 +15,15 @@ namespace TempTake_Server.Repository
                         .Where(mw => mw.ManagerId == managerId)
                         .Select(mw => mw.Id)
                         .Contains(e.ManagerWorkerId)
-                ).ToListAsync();
+                ).OrderByDescending(e => e.CreatedAt)
+                .Skip((page - 1) * count)
+                .Take(count)
+                .ToListAsync();
             
             return entries;
         }
 
-        public async Task<IEnumerable<Entry>> GetAllWorkerEntriesAsync(int workerId)
+        public async Task<IEnumerable<Entry>> GetAllWorkerEntriesAsync(int workerId, int count, int page)
         {
             var entries = await context.Entries
                 .Where(e =>
@@ -28,7 +31,10 @@ namespace TempTake_Server.Repository
                         .Where(mw => mw.WorkerId == workerId && mw.DeletedAt == null)
                         .Select(mw => mw.Id)
                         .Contains(e.ManagerWorkerId)
-                ).ToListAsync();
+                ).OrderByDescending(e => e.CreatedAt)
+                .Skip((page - 1) * count)
+                .Take(count)
+                .ToListAsync();
             
             return entries;
         }
@@ -61,7 +67,7 @@ namespace TempTake_Server.Repository
             return entry;
         }
 
-        public async Task<IEnumerable<Entry>> GetManagerEntriesAsync(int managerId, DateTime from, DateTime to)
+        public async Task<IEnumerable<Entry>> GetManagerEntriesAsync(int managerId, int count, int page, DateTime from, DateTime to)
         {
             var entries = await context.Entries
                 .Where(e =>
@@ -71,12 +77,15 @@ namespace TempTake_Server.Repository
                         .Contains(e.ManagerWorkerId) &&
                     e.CreatedAt >= from &&
                     e.CreatedAt <= to
-                ).ToListAsync();
+                ).OrderByDescending(e => e.CreatedAt)
+                .Skip((page - 1) * count)
+                .Take(count)
+                .ToListAsync();
             
             return entries;
         }
 
-        public async Task<IEnumerable<Entry>> GetWorkerEntriesAsync(int workerId, DateTime from, DateTime to)
+        public async Task<IEnumerable<Entry>> GetWorkerEntriesAsync(int workerId, int count, int page, DateTime from, DateTime to)
         {
             var entries = await context.Entries
                 .Where(e =>
@@ -86,7 +95,10 @@ namespace TempTake_Server.Repository
                         .Contains(e.ManagerWorkerId) &&
                     e.CreatedAt >= from &&
                     e.CreatedAt <= to
-                ).ToListAsync();
+                ).OrderByDescending(e => e.CreatedAt)
+                .Skip((page - 1) * count)
+                .Take(count)
+                .ToListAsync();
             
             return entries;
         }

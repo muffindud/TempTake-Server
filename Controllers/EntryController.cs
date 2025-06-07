@@ -30,7 +30,13 @@ namespace TempTake_Server.Controllers
                 if (workerId == null) return NotFound("Worker not found");
             }
             
-            var entries = await entryRepository.GetWorkerEntriesAsync((int)workerId, entryDto.From, entryDto.To);
+            var entries = await entryRepository.GetWorkerEntriesAsync(
+                (int)workerId,
+                entryDto.Count,
+                entryDto.Page,
+                entryDto.From, 
+                entryDto.To
+            );
             return Ok(entries);
         }
 
@@ -50,7 +56,11 @@ namespace TempTake_Server.Controllers
                 if (workerId == null) return NotFound("Manager not found");
             }
             
-            var entries = await entryRepository.GetAllWorkerEntriesAsync((int)workerId);
+            var entries = await entryRepository.GetAllWorkerEntriesAsync(
+                (int)workerId,
+                entryDto.Count,
+                entryDto.Page
+            );
             return Ok(entries);
         }
 
@@ -70,7 +80,13 @@ namespace TempTake_Server.Controllers
                 if (managerId == null) return NotFound("Manager not found");
             }
             
-            var entries = await entryRepository.GetManagerEntriesAsync((int)managerId, entryDto.From, entryDto.To);
+            var entries = await entryRepository.GetManagerEntriesAsync(
+                (int)managerId,
+                entryDto.Count,
+                entryDto.Page,
+                entryDto.From,
+                entryDto.To
+            );
             return Ok(entries);
         }
 
@@ -90,7 +106,11 @@ namespace TempTake_Server.Controllers
                 if (managerId == null) return NotFound("Manager not found");
             }
             
-            var entries = await entryRepository.GetAllManagerEntriesAsync((int)managerId);
+            var entries = await entryRepository.GetAllManagerEntriesAsync(
+                (int)managerId,
+                entryDto.Count,
+                entryDto.Page
+            );
             return Ok(entries);
         }
     }
