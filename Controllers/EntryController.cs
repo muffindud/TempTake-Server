@@ -134,12 +134,12 @@ namespace TempTake_Server.Controllers
             );
             return Ok(entries);
         }
-        
+
         [HttpGet("manager/last")]
         public async Task<IActionResult> GetLastManagerEntry([FromBody] ModuleEntryDto entryDto)
         {
             var managerId = entryDto.Id;
-            
+
             if (managerId == null)
             {
                 if (string.IsNullOrEmpty(entryDto.ModuleMac))
@@ -150,9 +150,10 @@ namespace TempTake_Server.Controllers
                 managerId = await managerRepository.GetManagerIdByMac(entryDto.ModuleMac);
                 if (managerId == null) return NotFound("Manager not found");
             }
-            
+
             var entry = await entryRepository.GetLastManagerEntryAsync((int)managerId);
             if (entry == null) return NotFound("No entries found for this manager");
             return Ok(entry);
+        }
     }
 }
