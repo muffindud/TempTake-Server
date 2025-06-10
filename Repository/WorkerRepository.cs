@@ -36,5 +36,16 @@ namespace TempTake_Server.Repository
                 .Select(mw => mw.Manager)
                 .SingleOrDefaultAsync();
         }
+
+        public async Task<int?> AddOrGetIdWorkerAsync(string workerMac)
+        {
+            var worker = await GetWorkerByMacAsync(workerMac);
+            if (worker != null) return worker.Id;
+
+            worker = new Worker { Mac = workerMac };
+            context.Workers.Add(worker);
+            await context.SaveChangesAsync();
+            return worker.Id;
+        }
     }
 }

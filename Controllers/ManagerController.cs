@@ -36,9 +36,8 @@ namespace TempTake_Server.Controllers
         [HttpPost("worker")]
         public async Task<IActionResult> AddWorkerToManager([FromBody] ModuleAddDto managerWorkerDto)
         {
-            var workerId = await workerRepository.GetWorkerIdByMacAsync(managerWorkerDto.Mac);
-            if (workerId == null) return NotFound("Worker not found, connect it to internet");
-
+            var workerId = await workerRepository.AddOrGetIdWorkerAsync(managerWorkerDto.Mac);
+            
             if (await managerRepository.IsWorkerInManagerAsync((int)workerId, managerWorkerDto.Id))
                 return BadRequest("Worker already in manager");
 
