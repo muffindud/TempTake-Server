@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TempTake_Server.Dtos.Worker;
+using TempTake_Server.Dtos.Manager;
 using TempTake_Server.Interfaces;
 
 namespace TempTake_Server.Controllers
@@ -9,12 +9,11 @@ namespace TempTake_Server.Controllers
     [ApiController]
     [Authorize]
     public class WorkerController(
-        IManagerRepository managerRepository,
         IWorkerRepository workerRepository) 
         : ControllerBase
     {
         [HttpGet]
-        public async Task<IActionResult> GetWorkerById([FromBody] WorkerDto workerDto)
+        public async Task<IActionResult> GetWorkerById([FromBody] ModuleDto workerDto)
         {
             var worker = await workerRepository.GetWorkerByIdAsync(workerDto.Id);
             if (worker == null) return NotFound("Worker not found");

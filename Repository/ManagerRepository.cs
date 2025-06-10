@@ -36,5 +36,25 @@ namespace TempTake_Server.Repository
                 .Select(mw => mw.Worker)
                 .ToListAsync();
         }
+
+        public async Task<bool> IsWorkerInManagerAsync(int managerId, int workerId)
+        {
+            return await context.ManagerWorkers
+                .AnyAsync(mw => mw.ManagerId == managerId && mw.WorkerId == workerId);
+        }
+
+        public async Task<int?> AddWorkerToManagerAsync(int managerId, int workerId)
+        {
+            var managerWorker = new ManagerWorker
+            {
+                ManagerId = managerId,
+                WorkerId = workerId
+            };
+            
+            await context.ManagerWorkers.AddAsync(managerWorker);
+            await context.SaveChangesAsync();
+            
+            return managerWorker.Id;
+        }
     }
 }

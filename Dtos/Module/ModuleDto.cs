@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace TempTake_Server.Dtos.Worker;
+namespace TempTake_Server.Dtos.Manager;
 
-public class WorkerDto
+public class ModuleDto
 {
     [Required]
     public required int Id { get; set; }

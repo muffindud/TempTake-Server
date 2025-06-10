@@ -23,15 +23,15 @@ namespace TempTake_Server.Controllers
         }
         
         [HttpPost("manager")]
-        public async Task<IActionResult> AddManagerToGroup([FromBody] GroupManagerDto groupManagerDto)
+        public async Task<IActionResult> AddManagerToGroup([FromBody] ModuleAddDto moduleAddDto)
         {
-            var managerId = await managerRepository.GetManagerIdByMac(groupManagerDto.ManagerMac);
+            var managerId = await managerRepository.GetManagerIdByMac(moduleAddDto.Mac);
             if (managerId == null) return NotFound("Manager not found, connect it to internet");
             
-            if (await groupRepository.IsManagerInGroupAsync((int)managerId, groupManagerDto.GroupId))
+            if (await groupRepository.IsManagerInGroupAsync((int)managerId, moduleAddDto.Id))
                 return BadRequest("Manager already in group");
             
-            var groupUserId = await groupRepository.AddManagerToGroupAsync(groupManagerDto.GroupId, (int)managerId);
+            var groupUserId = await groupRepository.AddManagerToGroupAsync(moduleAddDto.Id, (int)managerId);
             if (groupUserId == null) return BadRequest("Failed to add manager to group");
             
             return Ok(groupUserId);
