@@ -12,7 +12,7 @@ namespace TempTake_Server.Repository
             var entries = await context.Entries
                 .Where(e =>
                     context.ManagerWorkers
-                        .Where(mw => mw.ManagerId == managerId)
+                        .Where(mw => mw.ManagerId == managerId && mw.DeletedAt == null)
                         .Select(mw => mw.Id)
                         .Contains(e.ManagerWorkerId)
                 ).OrderByDescending(e => e.CreatedAt)
@@ -44,7 +44,7 @@ namespace TempTake_Server.Repository
             var entry = await context.Entries
                 .Where(e =>
                     context.ManagerWorkers
-                        .Where(mw => mw.ManagerId == managerId)
+                        .Where(mw => mw.ManagerId == managerId && mw.DeletedAt == null)
                         .Select(mw => mw.Id)
                         .Contains(e.ManagerWorkerId)
                 ).OrderByDescending(e => e.CreatedAt)
@@ -72,7 +72,7 @@ namespace TempTake_Server.Repository
             var entries = await context.Entries
                 .Where(e =>
                     context.ManagerWorkers
-                        .Where(mw => mw.ManagerId == managerId)
+                        .Where(mw => mw.ManagerId == managerId && mw.DeletedAt == null)
                         .Select(mw => mw.Id)
                         .Contains(e.ManagerWorkerId) &&
                     e.CreatedAt >= from &&

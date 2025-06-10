@@ -32,7 +32,7 @@ namespace TempTake_Server.Repository
         public async Task<List<Worker?>> GetManagerWorkersAsync(int id)
         {
             return await context.ManagerWorkers
-                .Where(mw => mw.ManagerId == id)
+                .Where(mw => mw.ManagerId == id && mw.DeletedAt == null)
                 .Select(mw => mw.Worker)
                 .ToListAsync();
         }
