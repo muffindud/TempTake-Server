@@ -51,7 +51,7 @@ namespace TempTake_Server.Repository
         public async Task<bool> DeleteWorkerAsync(int workerId)
         {
             var managerWorker = await context.ManagerWorkers
-                .Where(mw => mw.WorkerId == workerId && mw.DeletedAt != null)
+                .Where(mw => mw.WorkerId == workerId && mw.DeletedAt == null)
                 .SingleOrDefaultAsync();
 
             if (managerWorker == null) return false;
