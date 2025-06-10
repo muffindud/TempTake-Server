@@ -13,5 +13,6 @@ namespace TempTake_Server.Interfaces
         public Task<Worker?> GetWorkerByIdAsync(int id);
         public Task<Manager?> GetWorkerManagerAsync(int workerId);
         public Task<int?> AddOrGetIdWorkerAsync(string workerMac);
+        public Task<bool> DeleteWorkerAsync(int workerId);
     }
 }

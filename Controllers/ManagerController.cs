@@ -22,7 +22,19 @@ namespace TempTake_Server.Controllers
 
             return Ok(manager);
         }
+    
+        [HttpDelete]
+        public async Task<IActionResult> DeleteManager([FromBody] ModuleDto moduleDto)
+        {
+            var manager = await managerRepository.GetManagerByIdAsync(moduleDto.Id);
+            if (manager == null) return NotFound("Manager not found");
 
+            var result = await managerRepository.DeleteManagerAsync(moduleDto.Id);
+            if (!result) return BadRequest("Failed to delete manager");
+
+            return Ok("Manager deleted successfully");
+        }
+        
         [HttpGet("workers")]
         public async Task<IActionResult> GetManagerWorkers([FromBody] ModuleDto moduleDto)
         {

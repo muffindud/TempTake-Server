@@ -10,5 +10,6 @@ namespace TempTake_Server.Interfaces
         public Task<List<Worker?>> GetManagerWorkersAsync(int id);
         public Task<bool> IsWorkerInManagerAsync(int managerId, int workerId);
         public Task<int?> AddWorkerToManagerAsync(int managerId, int workerId);
+        public Task<bool> DeleteManagerAsync(int managerId);
     }
 }

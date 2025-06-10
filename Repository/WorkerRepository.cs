@@ -47,5 +47,19 @@ namespace TempTake_Server.Repository
             await context.SaveChangesAsync();
             return worker.Id;
         }
+
+        public async Task<bool> DeleteWorkerAsync(int workerId)
+        {
+            var managerWorker = await context.ManagerWorkers
+                .Where(mw => mw.WorkerId == workerId && mw.DeletedAt != null)
+                .SingleOrDefaultAsync();
+
+            if (managerWorker == null) return false;
+            
+            managerWorker.DeletedAt = DateTime.UtcNow;
+            context.ManagerWorkers.Update(managerWorker);
+            await context.SaveChangesAsync();
+            return true;
+        }
     }
 }

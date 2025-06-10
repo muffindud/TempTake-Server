@@ -20,5 +20,17 @@ namespace TempTake_Server.Controllers
 
             return Ok(worker);
         }
+        
+        [HttpDelete]
+        public async Task<IActionResult> DeleteWorker([FromBody] ModuleDto workerDto)
+        {
+            var worker = await workerRepository.GetWorkerByIdAsync(workerDto.Id);
+            if (worker == null) return NotFound("Worker not found");
+
+            var result = await workerRepository.DeleteWorkerAsync(workerDto.Id);
+            if (!result) return BadRequest("Failed to delete worker");
+
+            return Ok("Worker deleted successfully");
+        }
     }
 }
